@@ -1,8 +1,9 @@
 //Your code here
-// Store our API endpoint inside queryUrl
+// Here I have build our URL using the geojson call, our config key, and the dates desired
 var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-08-15&endtime=" +
     "2020-08-22&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
 var queryGeo = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
+//Here I have created a color panel that will be used for the earthquake sightings by magnitude
 function getColor(d) {
         return d > 5 ? '#F06B6B' :
                d > 4  ? '#F0A76B' :
@@ -24,7 +25,7 @@ d3.json(queryGeo, function(dataGeo) {
 
 function createFeatures(earthquakeData) {
     // Define a function we want to run once for each feature in the features array
-    // Give each feature a popup describing the place and time of the earthquake
+    // Give each feature a popup describing the place, time of the earthquake and magnitude
     function onEachFeature(feature, layer) {
         layer.bindPopup("<h3>" + feature.properties.place +
             "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" + (feature.properties.mag));
@@ -48,6 +49,7 @@ function createFeatures(earthquakeData) {
     createMap(earthquakes);
     //  earthquakes.addLayer(circle); //
 }
+//Here we are creating a variable with the fault lines or tectonic plates, that are obtained by a geojson
 var faultLines = [];
 function createFeatures2(earthquakeGeo) {
     var faultLinesx = L.geoJSON(earthquakeGeo, {
@@ -56,7 +58,7 @@ function createFeatures2(earthquakeGeo) {
     faultLines=faultLinesx;
 }
 
-
+// This is to display the panel of magnitude by color and give a better description of what is the information that is displayed on the map.
 var legend = L.control({position: "bottomright"});
     legend.onAdd = function(){
       var div = L.DomUtil.create("div","info legend");
@@ -70,27 +72,29 @@ var legend = L.control({position: "bottomright"});
     return div;
   };
   
-
+//In this part we have more than one map layer, there for here we are creating each of the map layers
 function createMap(earthquakes) {
-    // Define streetmap and darkmap layers
+    // Define satellitemap 
     var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> © <a href='https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php' target='_blank'>USGS</a>",
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
     id: "mapbox/satellite-streets-v9",
     accessToken: API_KEY
     });
+    // Define Outdoorsmap
     var Outdoors= L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> © <a href='https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php' target='_blank'>USGS</a>",
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
     id: "mapbox/outdoors-v9",
     accessToken: API_KEY
     });
+    // Define GrayScalesmap
     var GrayScale= L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> © <a href='https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php' target='_blank'>USGS</a>",
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
@@ -105,7 +109,7 @@ function createMap(earthquakes) {
         "GrayScale":GrayScale
       };
     
-      // Create overlay object to hold our overlay layer
+      // Create overlay object to hold our overlay layer. Our over layers are the Fault lines and the earthquakes sightings this way we can see a clean map if we want to
       var overlayMaps = {
         Earthquakes: earthquakes,
         Plate:faultLines
