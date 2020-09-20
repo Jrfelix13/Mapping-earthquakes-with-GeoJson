@@ -1,5 +1,5 @@
 //Your code here
-// Store our API endpoint inside queryUrl
+// Here I have build our URL using the geojson call, our config key, and the dates desired
 var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-08-15&endtime=" +
     "2020-08-22&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
 function getColor(d) {
